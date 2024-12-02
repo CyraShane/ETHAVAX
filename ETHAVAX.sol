@@ -1,10 +1,10 @@
 pragma solidity ^0.8.13;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol"; // Import ERC20 standard implementation
-import "@openzeppelin/contracts/access/Ownable.sol"; // Import Ownable contract to manage ownership
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract SimpleToken is ERC20, Ownable {
-    constructor() ERC20("SimpleToken", "STK") {
+    constructor() ERC20("SimpleToken", "STK") Ownable(msg.sender) {
         _mint(msg.sender, 100 * 10 ** decimals());
     }
 
@@ -18,11 +18,13 @@ contract SimpleToken is ERC20, Ownable {
         _burn(msg.sender, amount);
     }
 
-    function transfer(address to, uint256 amount) public override returns (bool) {
-        return super.transfer(to, amount);
+    function transfer(address to, uint256 amount) public override returns (bool success) {
+        require(to != address(0), "Transfer to the zero address is not allowed");
+        success = super.transfer(to, amount);
     }
 
-    function transferFrom(address from, address to, uint256 amount) public override returns (bool) {
-        return super.transferFrom(from, to, amount);
+    function transferFrom(address from, address to, uint256 amount) public override returns (bool success) {
+        require(to != address(0), "Transfer to the zero address is not allowed");
+        success = super.transferFrom(from, to, amount);
     }
 }
